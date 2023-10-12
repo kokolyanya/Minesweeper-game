@@ -134,7 +134,7 @@ def play(dimSize = 10, numBombs = 10):
         print("*********************************************")
     else:
         print(":(:(:(:(:(:(:(:(:(:(:(:(:(")
-        print(":(:(:( GAME OVER  :(:(:(:(")
+        print(":(:( SORRY, GAME OVER :(:(")
         print(":(:(:(:(:(:(:(:(:(:(:(:(:(")
         board.dug = [(r,c) for r in range(board.dimSize) for c in range(board.dimSize)]
         print(board)
