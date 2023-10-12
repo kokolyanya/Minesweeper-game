@@ -1,11 +1,11 @@
-import random
+import random, re
 
 class Board:
     def __init__(self, dimSize, numBombs):
         self.dimSize = dimSize
         self.numBombs = numBombs
 
-        self.board = makeNewBoard() #plant the bombs
+        self.board = self.makeNewBoard() #plant the bombs
         self.assignValueToBoard()
 
         #we'll save (row, cols) to this set
@@ -66,7 +66,7 @@ class Board:
                 else:
                     visibleBoard[row][col] = ' '
 
-        stringRep = ' '
+        stringRep = ''
         #get max column widths for printing
         widths = []
         for idx in range(self.dimSize):
@@ -79,12 +79,12 @@ class Board:
         
         #print the csv strings
         indices = [i for i in range(self.dimSize)]
-        indicesRow = ' '
+        indicesRow = '    '
         cells = []
         for idx, col in enumerate(indices):
             format = '%-'+str(widths[idx])+ "s"
             cells.append(format% (col))
-        indicesRow += ' '.join(cells)
+        indicesRow += '  '.join(cells)
         indicesRow += ' \n'
 
         for i in range(len(visibleBoard)):
@@ -107,9 +107,37 @@ class Board:
 def play(dimSize = 10, numBombs = 10):
     #step 1 : create the board and plant the bombs
     board = Board(dimSize, numBombs)
-    #step 2 : show the user the board and ask where they want to dig
 
+    #step 2 : show the user the board and ask where they want to dig
     #step 3a : if location is a bomb, show game over message
     #step 3b : if location is not a bomb, dig recursively until each square is at least next to a bomb
     #step 4 : repeat steps 2 and 3a,b until there are no places to dig => VICTORY !
-    pass
+
+    safe = True
+    while len(board.dug) < board.dimSize**2 - numBombs:
+        print(board)
+        userInput = re.split(',(\\s)*',input("Where would do like to dig ? Input as row,col : "))
+        try:
+            row, col = int(userInput[0]), int(userInput[-1])
+        except ValueError:
+            continue
+        if row<0 or row>=board.dimSize or col<0 or col>=board.dimSize : #if the row or column is invalid
+            print("Invalid location. Try again !")
+            continue
+        safe = board.dig(row, col)  #if it's valid
+        if not safe:
+            break   #dug a bomb
+        
+    if safe:
+        print("*********************************************")
+        print("** CONGRATULATIONS, YOU ARE VICTORIOUS !!! **")
+        print("*********************************************")
+    else:
+        print(":(:(:(:(:(:(:(:(:(:(:(:(:(")
+        print(":(:(:( GAME OVER  :(:(:(:(")
+        print(":(:(:(:(:(:(:(:(:(:(:(:(:(")
+        board.dug = [(r,c) for r in range(board.dimSize) for c in range(board.dimSize)]
+        print(board)
+
+if __name__ == '__main__':
+    play()
